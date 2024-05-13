@@ -4,7 +4,7 @@ const dragTR = false;
 const dragBR = false;
 const dragWholeRect = false;
 
-export function initSetDetectionAreaScreen() {
+export function initSetDetectionAreaScreen(canvas: HTMLCanvasElement) {
 	canvas.addEventListener('mousedown', mouseDown, false);
 	canvas.addEventListener('mouseup', mouseUp, false);
 	canvas.addEventListener('mousemove', mouseMove, false);
@@ -13,7 +13,7 @@ export function initSetDetectionAreaScreen() {
 	canvas.addEventListener('touchend', mouseUp);
 }
 
-export function destroySetDetectionAreaScreen() {
+export function destroySetDetectionAreaScreen(canvas: HTMLCanvasElement) {
 	canvas.removeEventListener('mousedown', mouseDown, false);
 	canvas.removeEventListener('mouseup', mouseUp, false);
 	canvas.removeEventListener('mousemove', mouseMove, false);

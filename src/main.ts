@@ -3,16 +3,19 @@ import './style.scss';
 import { ObjectDetectorResult } from '@mediapipe/tasks-vision';
 import { drawDetections } from './helpers/draw-object-detections.ts';
 import { getObjectDetector } from './helpers/get-object-detector.ts';
-import { initMenu } from './menu.ts';
+import { initMenu } from './menu/menu.ts';
+import { initWebcam } from './helpers/get-webcam-frame.ts';
 
-let image: HTMLImageElement;
+// let image: HTMLImageElement;
+let video: HTMLVideoElement;
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 
 async function start() {
 	initMenu();
 
-	image = document.getElementById('image') as HTMLImageElement;
+	// image = document.getElementById('image') as HTMLImageElement;
+	video = document.getElementById('video') as HTMLVideoElement;
 	canvas = document.getElementById('canvas') as HTMLCanvasElement;
 	ctx = canvas.getContext('2d');
 
@@ -21,12 +24,14 @@ async function start() {
 		return;
 	}
 
-	const runningMode = 'IMAGE';
+	await initWebcam(ctx, video);
+
+	const runningMode = 'VIDEO';
 	const objectDetector = await getObjectDetector(runningMode);
-	const detections: ObjectDetectorResult = objectDetector.detect(image);
+	const detections: ObjectDetectorResult = objectDetector.detectForVideo(video, video.currentTime);
 	console.log(detections);
 
-	drawDetections(ctx, image, detections);
+	drawDetections(ctx, video, detections);
 }
 
 document.addEventListener('DOMContentLoaded', start);

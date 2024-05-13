@@ -2,8 +2,8 @@ import { ObjectDetectorResult } from '@mediapipe/tasks-vision';
 import { compact } from 'lodash-es';
 import { combineOverlappingBoundingBoxes } from './combine-overlapping-bounding-boxes.ts';
 
-export function drawDetections(ctx: CanvasRenderingContext2D, image: HTMLImageElement, detectionResult: ObjectDetectorResult) {
-	ctx.drawImage(image, 0, 0);
+export function drawDetections(ctx: CanvasRenderingContext2D, video: HTMLVideoElement, detectionResult: ObjectDetectorResult) {
+	ctx.drawImage(video, 0, 0);
 
 	const boundingBoxes = compact(detectionResult.detections.map((detection) => detection.boundingBox));
 

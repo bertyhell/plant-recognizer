@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Plant recognizer</title>
+    <link rel="stylesheet" href="/src/styles.css"/>
+</head>
+<body>
+<div id="app">
+          <div class="c-menu">
+            <div id="hamburger" class="c-button">SETTING</div>
+            <div id="hamburgerClose" class="c-button">HOME</div>
+            <ul class="c-menu__expanded">
+              <li id="calibratePlants" class="c-button">calibrate plants</li>
+              <li id="setDetectionArea" class="c-button">set detection areas</li>
+            </ul>
+          </div>
+
+    <!--      <video id="video" controls style="display: none;" autoplay>-->
+    <!--        <source src="assets/webcam.mp4" type="video/mp4">-->
+    <!--      </video>-->
+    <img src="assets/webcamimage.png" id="image"/>
+    <canvas id="canvas" width="1280" height="720"></canvas>
+
+</div>
+<script type="module" src="/src/main.ts"></script>
+<!--    <script type="module" src="/src/menu.ts"></script>-->
+</body>
+</html>

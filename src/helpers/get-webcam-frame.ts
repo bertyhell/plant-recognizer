@@ -14,6 +14,7 @@ async function getWebcam(video: HTMLVideoElement) {
 }
 
 export async function initWebcam(ctx: CanvasRenderingContext2D, video: HTMLVideoElement): Promise<void> {
+	// eslint-disable-next-line no-async-promise-executor
 	return new Promise(async (resolve, reject) => {
 		try {
 			// if (window.location.protocol !== 'https:') {
@@ -32,7 +33,7 @@ export async function initWebcam(ctx: CanvasRenderingContext2D, video: HTMLVideo
 
 			await getWebcam(video);
 
-			video.addEventListener('loadedmetadata', function (evt) {
+			video.addEventListener('loadeddata', function (evt) {
 				// width = canvas.width = video.videoWidth;
 				// height = canvas.height = video.videoHeight;
 				// centerX = width / 2;

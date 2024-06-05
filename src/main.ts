@@ -1,23 +1,25 @@
 import './style.scss';
 
-import { ObjectDetectorResult } from '@mediapipe/tasks-vision';
+import { Detection, ObjectDetector, ObjectDetectorResult } from '@mediapipe/tasks-vision';
 import { drawDetections } from './helpers/draw-object-detections.ts';
 import { getObjectDetector } from './helpers/get-object-detector.ts';
 import { initMenu } from './menu/menu.ts';
 import { initWebcam } from './helpers/get-webcam-frame.ts';
 
+const SETTING_MAX_DETECTION_WIDTH_PERCENTAGE = 0.5;
+const SETTING_MAX_DETECTION_HEIGHT_PERCENTAGE = 0.5;
+const SETTING_MIN_DETECTION_WIDTH_PERCENTAGE = 0.05;
+const SETTING_MIN_DETECTION_HEIGHT_PERCENTAGE = 0.05;
+
 // let image: HTMLImageElement;
-let video: HTMLVideoElement;
-let canvas: HTMLCanvasElement;
-let ctx: CanvasRenderingContext2D | null;
 
 async function start() {
 	initMenu();
 
 	// image = document.getElementById('image') as HTMLImageElement;
-	video = document.getElementById('video') as HTMLVideoElement;
-	canvas = document.getElementById('canvas') as HTMLCanvasElement;
-	ctx = canvas.getContext('2d');
+	const video: HTMLVideoElement = document.getElementById('video') as HTMLVideoElement;
+	const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
+	const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
 
 	if (!ctx) {
 		console.error('No canvas found');
@@ -26,12 +28,45 @@ async function start() {
 
 	await initWebcam(ctx, video);
 
-	const runningMode = 'VIDEO';
+	const runningMode = 'IMAGE';
 	const objectDetector = await getObjectDetector(runningMode);
-	const detections: ObjectDetectorResult = objectDetector.detectForVideo(video, video.currentTime);
-	console.log(detections);
 
-	drawDetections(ctx, video, detections);
+	detectObjectsInWebcamFrame(objectDetector, ctx, video);
+}
+
+function filterInvalidDetections(detections: Detection[], videoWidth: number, videoHeight: number): Detection[] {
+	return detections.filter((detection) => {
+		if (!detection.boundingBox?.width) {
+			return false;
+		}
+		if (!detection.boundingBox?.height) {
+			return false;
+		}
+		if (detection.boundingBox?.width > SETTING_MAX_DETECTION_WIDTH_PERCENTAGE * videoWidth) {
+			return false;
+		}
+		if (detection.boundingBox?.height > SETTING_MAX_DETECTION_HEIGHT_PERCENTAGE * videoHeight) {
+			return false;
+		}
+		if (detection.boundingBox?.width < SETTING_MIN_DETECTION_WIDTH_PERCENTAGE * videoWidth) {
+			return false;
+		}
+		if (detection.boundingBox?.height < SETTING_MIN_DETECTION_HEIGHT_PERCENTAGE * videoHeight) {
+			return false;
+		}
+		return true;
+	});
+}
+
+function detectObjectsInWebcamFrame(objectDetector: ObjectDetector, ctx: CanvasRenderingContext2D, video: HTMLVideoElement) {
+	const detectionResult: ObjectDetectorResult = objectDetector.detect(video);
+	console.log(detectionResult.detections);
+
+	const validDetections = filterInvalidDetections(detectionResult.detections, video.videoWidth, video.videoHeight);
+
+	drawDetections(ctx, video, validDetections);
+
+	setTimeout(() => detectObjectsInWebcamFrame(objectDetector, ctx, video), 16);
 }
 
 document.addEventListener('DOMContentLoaded', start);

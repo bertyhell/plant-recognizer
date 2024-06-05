@@ -24,8 +24,11 @@ body,
 
 video {
   object-fit: contain;
-  width: 100vw;
-  height: 100vh;
+  position: absolute;
+  right:0;
+  top:0;
+  width: 20vw;
+  height: 10vh;
 }
 
 canvas {
